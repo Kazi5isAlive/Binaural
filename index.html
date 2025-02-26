@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binaural Beat Generator</title>
+    <title>Kazi's Beats </title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -83,11 +83,21 @@
             margin-bottom: 0;
             padding-left: 20px;
         }
+        #error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Binaural Beat Generator</h1>
+        
+        <div id="error-message"></div>
         
         <div class="preset-buttons">
             <button class="preset-button" data-type="delta">Delta</button>
@@ -134,18 +144,14 @@
     </div>
 
     <script>
+        // Debugging console
+        console.log("Script loading...");
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Audio context and nodes
-            let audioContext = null;
-            let leftOscillator = null;
-            let rightOscillator = null;
-            let noiseNode = null;
-            let noiseFilter = null;
-            let noiseGain = null;
-            let mainGain = null;
-            let isPlaying = false;
+            console.log("DOM loaded");
             
             // DOM elements
+            const errorDisplay = document.getElementById('error-message');
             const playButton = document.getElementById('playButton');
             const baseFreqSlider = document.getElementById('baseFreq');
             const beatFreqSlider = document.getElementById('beatFreq');
@@ -163,6 +169,16 @@
             const resultBeatDisplay = document.getElementById('resultBeat');
             const brainwaveTypeDisplay = document.getElementById('brainwaveType');
             
+            // Audio context and nodes
+            let audioContext = null;
+            let leftOscillator = null;
+            let rightOscillator = null;
+            let noiseNode = null;
+            let noiseFilter = null;
+            let noiseGain = null;
+            let mainGain = null;
+            let isPlaying = false;
+            
             // Current values
             let baseFreq = 300;
             let beatFreq = 4;
@@ -170,29 +186,44 @@
             let mainVol = 0.5;
             let brainwaveType = 'theta';
             
+            function showError(message) {
+                errorDisplay.textContent = message;
+                errorDisplay.style.display = 'block';
+                console.error(message);
+            }
+            
+            function hideError() {
+                errorDisplay.style.display = 'none';
+            }
+            
             // Helper to create white noise
             function createNoiseNode() {
-                const bufferSize = 2 * audioContext.sampleRate;
-                const noiseBuffer = audioContext.createBuffer(
-                    2, 
-                    bufferSize, 
-                    audioContext.sampleRate
-                );
-                
-                // Fill buffer with white noise
-                for (let channel = 0; channel < noiseBuffer.numberOfChannels; channel++) {
-                    const output = noiseBuffer.getChannelData(channel);
-                    for (let i = 0; i < bufferSize; i++) {
-                        output[i] = Math.random() * 2 - 1;
+                try {
+                    const bufferSize = 2 * audioContext.sampleRate;
+                    const noiseBuffer = audioContext.createBuffer(
+                        2, 
+                        bufferSize, 
+                        audioContext.sampleRate
+                    );
+                    
+                    // Fill buffer with white noise
+                    for (let channel = 0; channel < noiseBuffer.numberOfChannels; channel++) {
+                        const output = noiseBuffer.getChannelData(channel);
+                        for (let i = 0; i < bufferSize; i++) {
+                            output[i] = Math.random() * 2 - 1;
+                        }
                     }
+                    
+                    // Create noise source from buffer
+                    const noise = audioContext.createBufferSource();
+                    noise.buffer = noiseBuffer;
+                    noise.loop = true;
+                    
+                    return noise;
+                } catch (error) {
+                    showError("Error creating noise: " + error.message);
+                    return null;
                 }
-                
-                // Create noise source from buffer
-                const noise = audioContext.createBufferSource();
-                noise.buffer = noiseBuffer;
-                noise.loop = true;
-                
-                return noise;
             }
             
             // Set brainwave presets
@@ -238,8 +269,12 @@
                 updateFrequencyDisplays();
                 
                 if (isPlaying && leftOscillator) {
-                    leftOscillator.frequency.value = baseFreq;
-                    rightOscillator.frequency.value = baseFreq + beatFreq;
+                    try {
+                        leftOscillator.frequency.value = baseFreq;
+                        rightOscillator.frequency.value = baseFreq + beatFreq;
+                    } catch (error) {
+                        showError("Error updating frequencies: " + error.message);
+                    }
                 }
             }
             
@@ -251,7 +286,11 @@
                 updateFrequencyDisplays();
                 
                 if (isPlaying && rightOscillator) {
-                    rightOscillator.frequency.value = baseFreq + beatFreq;
+                    try {
+                        rightOscillator.frequency.value = baseFreq + beatFreq;
+                    } catch (error) {
+                        showError("Error updating beat frequency: " + error.message);
+                    }
                 }
             }
             
@@ -264,94 +303,119 @@
             
             // Start sound
             function startSound() {
-                // Create new audio context if needed
-                if (!audioContext) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                hideError();
+                
+                try {
+                    // Create new audio context if needed
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        console.log("AudioContext created:", audioContext);
+                    }
+                    
+                    // Resume context if suspended
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                    
+                    console.log("AudioContext state:", audioContext.state);
+                    
+                    // Main volume control
+                    mainGain = audioContext.createGain();
+                    mainGain.gain.value = mainVol;
+                    mainGain.connect(audioContext.destination);
+                    
+                    // Create oscillators for binaural beat
+                    leftOscillator = audioContext.createOscillator();
+                    rightOscillator = audioContext.createOscillator();
+                    
+                    // Set frequencies
+                    leftOscillator.frequency.value = baseFreq;
+                    rightOscillator.frequency.value = baseFreq + beatFreq;
+                    
+                    // Create stereo channel merger
+                    const merger = audioContext.createChannelMerger(2);
+                    
+                    // Create gains for each ear
+                    const leftGain = audioContext.createGain();
+                    const rightGain = audioContext.createGain();
+                    
+                    // Connect left oscillator
+                    leftOscillator.connect(leftGain);
+                    leftGain.connect(merger, 0, 0);
+                    
+                    // Connect right oscillator
+                    rightOscillator.connect(rightGain);
+                    rightGain.connect(merger, 0, 1);
+                    
+                    // Connect merger to main output
+                    merger.connect(mainGain);
+                    
+                    // Create and setup noise
+                    noiseNode = createNoiseNode();
+                    if (noiseNode) {
+                        noiseFilter = audioContext.createBiquadFilter();
+                        noiseGain = audioContext.createGain();
+                        
+                        // Configure bandpass filter for high-frequency noise
+                        noiseFilter.type = 'bandpass';
+                        noiseFilter.frequency.value = 9500; // Center of 8000-11000 Hz range
+                        noiseFilter.Q.value = 0.5; // Width of the band
+                        
+                        // Set noise volume
+                        noiseGain.gain.value = noiseVol;
+                        
+                        // Connect noise
+                        noiseNode.connect(noiseFilter);
+                        noiseFilter.connect(noiseGain);
+                        noiseGain.connect(mainGain);
+                    }
+                    
+                    // Start oscillators and noise
+                    leftOscillator.start();
+                    rightOscillator.start();
+                    if (noiseNode) noiseNode.start();
+                    
+                    isPlaying = true;
+                    playButton.textContent = 'Stop';
+                    playButton.classList.add('playing');
+                    
+                    console.log("Audio started successfully");
+                } catch (error) {
+                    showError("Failed to start audio: " + error.message);
+                    stopSound();
                 }
-                
-                // Main volume control
-                mainGain = audioContext.createGain();
-                mainGain.gain.value = mainVol;
-                mainGain.connect(audioContext.destination);
-                
-                // Create oscillators for binaural beat
-                leftOscillator = audioContext.createOscillator();
-                rightOscillator = audioContext.createOscillator();
-                
-                // Set frequencies
-                leftOscillator.frequency.value = baseFreq;
-                rightOscillator.frequency.value = baseFreq + beatFreq;
-                
-                // Create stereo channel merger
-                const merger = audioContext.createChannelMerger(2);
-                
-                // Create gains for each ear
-                const leftGain = audioContext.createGain();
-                const rightGain = audioContext.createGain();
-                
-                // Connect left oscillator
-                leftOscillator.connect(leftGain);
-                leftGain.connect(merger, 0, 0);
-                
-                // Connect right oscillator
-                rightOscillator.connect(rightGain);
-                rightGain.connect(merger, 0, 1);
-                
-                // Connect merger to main output
-                merger.connect(mainGain);
-                
-                // Create and setup noise
-                noiseNode = createNoiseNode();
-                noiseFilter = audioContext.createBiquadFilter();
-                noiseGain = audioContext.createGain();
-                
-                // Configure bandpass filter for high-frequency noise
-                noiseFilter.type = 'bandpass';
-                noiseFilter.frequency.value = 9500; // Center of 8000-11000 Hz range
-                noiseFilter.Q.value = 0.5; // Width of the band
-                
-                // Set noise volume
-                noiseGain.gain.value = noiseVol;
-                
-                // Connect noise
-                noiseNode.connect(noiseFilter);
-                noiseFilter.connect(noiseGain);
-                noiseGain.connect(mainGain);
-                
-                // Start oscillators and noise
-                leftOscillator.start();
-                rightOscillator.start();
-                noiseNode.start();
-                
-                isPlaying = true;
-                playButton.textContent = 'Stop';
-                playButton.classList.add('playing');
             }
             
             // Stop sound
             function stopSound() {
-                if (leftOscillator) {
-                    leftOscillator.stop();
-                    leftOscillator = null;
+                try {
+                    if (leftOscillator) {
+                        leftOscillator.stop();
+                        leftOscillator = null;
+                    }
+                    
+                    if (rightOscillator) {
+                        rightOscillator.stop();
+                        rightOscillator = null;
+                    }
+                    
+                    if (noiseNode) {
+                        noiseNode.stop();
+                        noiseNode = null;
+                    }
+                } catch (error) {
+                    console.error("Error stopping sound:", error);
+                } finally {
+                    isPlaying = false;
+                    playButton.textContent = 'Start';
+                    playButton.classList.remove('playing');
                 }
-                
-                if (rightOscillator) {
-                    rightOscillator.stop();
-                    rightOscillator = null;
-                }
-                
-                if (noiseNode) {
-                    noiseNode.stop();
-                    noiseNode = null;
-                }
-                
-                isPlaying = false;
-                playButton.textContent = 'Start';
-                playButton.classList.remove('playing');
             }
             
             // Event listeners
             playButton.addEventListener('click', function() {
+                console.log("Play button clicked");
+                
                 if (isPlaying) {
                     stopSound();
                 } else {
@@ -373,7 +437,11 @@
                 noiseVolValue.textContent = this.value;
                 
                 if (noiseGain) {
-                    noiseGain.gain.value = value;
+                    try {
+                        noiseGain.gain.value = value;
+                    } catch (error) {
+                        console.error("Error updating noise volume:", error);
+                    }
                 }
             });
             
@@ -383,4 +451,25 @@
                 mainVolValue.textContent = this.value;
                 
                 if (mainGain) {
-                    ma
+                    try {
+                        mainGain.gain.value = value;
+                    } catch (error) {
+                        console.error("Error updating main volume:", error);
+                    }
+                }
+            });
+            
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    setBrainwavePreset(this.dataset.type);
+                });
+            });
+            
+            // Initialize displays
+            updateFrequencyDisplays();
+            
+            console.log("Setup complete - generator ready");
+        });
+    </script>
+</body>
+</html>
