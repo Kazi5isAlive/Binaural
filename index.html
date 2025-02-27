@@ -3,473 +3,1566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kazi's Beats </title>
+    <title>Advanced Brainwave Entrainment Generator</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
+            color: #333;
         }
+        
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
         h1 {
             text-align: center;
-            margin-top: 0;
+            margin-bottom: 20px;
         }
+        
+        h3 {
+            margin-top: 25px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
         button {
             cursor: pointer;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 4px;
+            padding: 8px 15px;
             font-weight: bold;
+            transition: background-color 0.3s;
         }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
         .play-button {
             display: block;
             width: 100%;
-            margin: 20px 0;
             background-color: #4CAF50;
             color: white;
             font-size: 18px;
-            padding: 15px;
+            padding: 12px;
+            margin: 20px 0;
         }
-        .play-button.playing {
+        
+        .play-button.stop {
             background-color: #f44336;
         }
+        
         .preset-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
         }
+        
         .preset-button {
-            flex: 1;
-            min-width: 60px;
-            background-color: #e0e0e0;
-        }
-        .preset-button.active {
-            background-color: #2196F3;
+            flex: 1 1 auto;
+            min-width: 80px;
+            background-color: #3498db;
             color: white;
         }
-        .control-group {
+        
+        .preset-button.active {
+            background-color: #2980b9;
+        }
+        
+        .slider-group {
             margin-bottom: 15px;
         }
+        
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+        
+        .inline-label {
+            display: inline;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+        
         input[type="range"] {
             width: 100%;
         }
-        .info {
+        
+        .toggle-control {
+            margin-bottom: 10px;
+        }
+        
+        .toggle-content {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            padding-left: 8px;
+            border-left: 2px solid #eee;
+        }
+        
+        .advanced-toggle {
+            width: 100%;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .resonance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .error-message {
+            background-color: #fee;
+            color: #c00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .status-section {
             margin-top: 20px;
             padding: 15px;
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
             border-radius: 5px;
             font-size: 14px;
         }
-        .info p {
-            margin-top: 0;
+        
+        .status-section ul {
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
-        .info ul {
-            margin-bottom: 0;
-            padding-left: 20px;
+        
+        .note {
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 12px;
         }
-        #error-message {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
+        
+        .hidden {
             display: none;
+        }
+        
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Binaural Beat Generator</h1>
+        <h1>Advanced Brainwave Entrainment Generator</h1>
         
-        <div id="error-message"></div>
+        <div id="errorMessage" class="error-message"></div>
         
         <div class="preset-buttons">
-            <button class="preset-button" data-type="delta">Delta</button>
-            <button class="preset-button active" data-type="theta">Theta</button>
-            <button class="preset-button" data-type="alpha">Alpha</button>
-            <button class="preset-button" data-type="beta">Beta</button>
-            <button class="preset-button" data-type="gamma">Gamma</button>
+            <button class="preset-button" data-preset="delta">Delta (0.5-4Hz)</button>
+            <button class="preset-button active" data-preset="theta">Theta (4-8Hz)</button>
+            <button class="preset-button" data-preset="alpha">Alpha (8-13Hz)</button>
+            <button class="preset-button" data-preset="beta">Beta (13-30Hz)</button>
+            <button class="preset-button" data-preset="gamma">Gamma (30-100Hz)</button>
         </div>
         
         <button id="playButton" class="play-button">Start</button>
         
-        <div class="controls">
-            <div class="control-group">
-                <label for="baseFreq">Base Frequency: <span id="baseFreqValue">300</span> Hz</label>
-                <input type="range" id="baseFreq" min="200" max="600" value="300">
+        <h3>Basic Settings</h3>
+        <div class="grid">
+            <div class="slider-group">
+                <label>Base Frequency: <span id="baseFreqValue">300</span> Hz</label>
+                <input type="range" id="baseFreq" min="100" max="800" step="10" value="300">
             </div>
             
-            <div class="control-group">
-                <label for="beatFreq">Binaural Beat Frequency: <span id="beatFreqValue">4</span> Hz</label>
-                <input type="range" id="beatFreq" min="1" max="40" step="0.5" value="4">
+            <div class="slider-group">
+                <label>Beat Frequency: <span id="beatFreqValue">4</span> Hz</label>
+                <input type="range" id="beatFreq" min="0.5" max="40" step="0.5" value="4">
             </div>
             
-            <div class="control-group">
-                <label for="noiseVol">Background Noise: <span id="noiseVolValue">15</span>%</label>
-                <input type="range" id="noiseVol" min="0" max="100" value="15">
-            </div>
-            
-            <div class="control-group">
-                <label for="mainVol">Main Volume: <span id="mainVolValue">50</span>%</label>
+            <div class="slider-group">
+                <label>Volume: <span id="mainVolValue">50</span>%</label>
                 <input type="range" id="mainVol" min="0" max="100" value="50">
+            </div>
+            
+            <div class="toggle-control">
+                <input type="checkbox" id="noiseEnabled" checked>
+                <label for="noiseEnabled" class="inline-label">Background Noise</label>
+                
+                <div class="slider-group" style="margin-top: 5px;">
+                    <input type="range" id="noiseVol" min="0" max="100" value="15">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                        <span>0%</span>
+                        <span id="noiseVolValue">15%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="info">
-            <p><strong>Current settings:</strong></p>
+        <button id="advancedToggle" class="advanced-toggle">Show Advanced Options</button>
+        
+        <div id="advancedOptions" class="hidden">
+            <h3>Isochronic Tones</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="isochronicEnabled">
+                <label for="isochronicEnabled" class="inline-label">Enable Isochronic Tones</label>
+            </div>
+            
+            <div id="isochronicControls" class="toggle-content hidden">
+                <div class="slider-group">
+                    <label>Pulse Rate: <span id="isoRateValue">4</span> Hz</label>
+                    <input type="range" id="isoRate" min="0.5" max="20" step="0.5" value="4">
+                </div>
+                
+                <div>
+                    <label>Waveform:</label>
+                    <div>
+                        <label style="display:inline;font-weight:normal;margin-right:15px;">
+                            <input type="radio" name="isoWave" value="square" checked> Square
+                        </label>
+                        <label style="display:inline;font-weight:normal;margin-right:15px;">
+                            <input type="radio" name="isoWave" value="sine"> Sine
+                        </label>
+                        <label style="display:inline;font-weight:normal;">
+                            <input type="radio" name="isoWave" value="triangle"> Triangle
+                        </label>
+                    </div>
+                    <p class="note" style="text-align:left;margin-top:5px;">
+                        Creates rhythmic on/off pulses that can help entrain brainwaves
+                    </p>
+                </div>
+            </div>
+            
+            <h3>Frequency Sweep</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="sweepEnabled">
+                <label for="sweepEnabled" class="inline-label">Enable Frequency Sweep</label>
+            </div>
+            
+            <div id="sweepControls" class="toggle-content hidden">
+                <div class="grid">
+                    <div class="slider-group">
+                        <label>Minimum: <span id="sweepMinValue">2</span> Hz</label>
+                        <input type="range" id="sweepMin" min="0.5" max="20" step="0.5" value="2">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label>Maximum: <span id="sweepMaxValue">8</span> Hz</label>
+                        <input type="range" id="sweepMax" min="0.5" max="40" step="0.5" value="8">
+                    </div>
+                </div>
+                <p class="note" style="text-align:left;">
+                    Gradually changes frequencies to guide brainwaves through different states
+                </p>
+            </div>
+            
+            <h3>Dual Binaural Beats</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="dualEnabled">
+                <label for="dualEnabled" class="inline-label">Enable Secondary Binaural Beat</label>
+            </div>
+            
+            <div id="dualControls" class="toggle-content hidden">
+                <div class="slider-group">
+                    <label>Secondary Beat: <span id="secondaryBeatValue">8</span> Hz</label>
+                    <input type="range" id="secondaryBeat" min="0.5" max="40" step="0.5" value="8">
+                </div>
+                <p class="note" style="text-align:left;">
+                    Adds a second binaural beat at a different frequency for complex interference patterns
+                </p>
+            </div>
+            
+            <h3>Monaural Beats</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="monauralEnabled">
+                <label for="monauralEnabled" class="inline-label">Enable Monaural Beats</label>
+                <p class="note" style="text-align:left;margin-top:5px;margin-left:25px;">
+                    Adds pre-mixed beats that don't require stereo separation and may produce stronger entrainment
+                </p>
+            </div>
+            
+            <h3>Harmonic Layering</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="harmonicsEnabled">
+                <label for="harmonicsEnabled" class="inline-label">Enable Harmonic Layering</label>
+                <p class="note" style="text-align:left;margin-top:5px;margin-left:25px;">
+                    Adds harmonic overtones that may enhance neural response and create a richer sound
+                </p>
+            </div>
+            
+            <h3>Resonant Frequencies</h3>
+            <div class="toggle-control">
+                <input type="checkbox" id="resonanceEnabled">
+                <label for="resonanceEnabled" class="inline-label">Enable Resonant Frequencies</label>
+            </div>
+            
+            <div id="resonanceControls" class="toggle-content hidden">
+                <div class="slider-group">
+                    <label>Volume: <span id="resonanceVolValue">30</span>%</label>
+                    <input type="range" id="resonanceVol" min="0" max="100" value="30">
+                </div>
+                
+                <div class="resonance-grid">
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="7.83" checked> Schumann (7.83Hz)
+                    </label>
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="432" checked> A=432Hz
+                    </label>
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="528"> DNA Repair (528Hz)
+                    </label>
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="396"> Root Chakra (396Hz)
+                    </label>
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="639"> Heart Chakra (639Hz)
+                    </label>
+                    <label style="font-weight:normal;">
+                        <input type="checkbox" class="resonanceCheckbox" data-freq="111"> Beta Focus (111Hz)
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-section">
+            <p><strong>Current configuration:</strong></p>
             <ul>
-                <li>Left ear: <span id="leftFreq">300</span> Hz</li>
-                <li>Right ear: <span id="rightFreq">304</span> Hz</li>
-                <li>Resulting binaural beat: <span id="resultBeat">4</span> Hz (<span id="brainwaveType">theta</span>)</li>
-                <li>Background noise: 8,000-11,000 Hz band</li>
+                <li>Left ear: <span id="statusLeftFreq">300</span> Hz</li>
+                <li>Right ear: <span id="statusRightFreq">304</span> Hz</li>
+                <li>Binaural beat: <span id="statusBeatFreq">4</span> Hz (<span id="statusBrainwave">theta</span>)</li>
+                <li id="statusIsochronic" class="hidden">Isochronic pulses: <span id="statusIsoRate">4</span> Hz (<span id="statusIsoWave">square</span>)</li>
+                <li id="statusSweep" class="hidden">Frequency sweep: <span id="statusSweepMin">2</span>-<span id="statusSweepMax">8</span> Hz</li>
+                <li id="statusDual" class="hidden">Secondary binaural beat: <span id="statusSecondaryBeat">8</span> Hz</li>
+                <li id="statusMonaural" class="hidden">Monaural beats enabled</li>
+                <li id="statusHarmonics" class="hidden">Harmonic layering enabled</li>
+                <li id="statusNoise">Background noise: 8,000-11,000 Hz band</li>
+                <li id="statusResonance" class="hidden">Resonant frequencies: <span id="statusResonanceList">7.83Hz, 432Hz</span></li>
             </ul>
-            <p><strong>Note:</strong> For best results, use stereo headphones.</p>
+            <p class="note">For best results, use stereo headphones</p>
         </div>
     </div>
 
     <script>
-        // Debugging console
-        console.log("Script loading...");
+        // State
+        let isPlaying = false;
+        let audioContext = null;
+        let oscillators = {};
+        let gainNodes = {};
+        let filters = {};
+        let intervals = {};
         
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM loaded");
+        // Settings object
+        let settings = {
+            baseFreq: 300,
+            beatFreq: 4,
+            mainVolume: 0.5,
+            brainwaveType: 'theta',
             
-            // DOM elements
-            const errorDisplay = document.getElementById('error-message');
-            const playButton = document.getElementById('playButton');
-            const baseFreqSlider = document.getElementById('baseFreq');
-            const beatFreqSlider = document.getElementById('beatFreq');
-            const noiseVolSlider = document.getElementById('noiseVol');
-            const mainVolSlider = document.getElementById('mainVol');
-            const presetButtons = document.querySelectorAll('.preset-button');
+            noiseEnabled: true,
+            noiseVolume: 0.15,
             
-            // Display elements
-            const baseFreqValue = document.getElementById('baseFreqValue');
-            const beatFreqValue = document.getElementById('beatFreqValue');
-            const noiseVolValue = document.getElementById('noiseVolValue');
-            const mainVolValue = document.getElementById('mainVolValue');
-            const leftFreqDisplay = document.getElementById('leftFreq');
-            const rightFreqDisplay = document.getElementById('rightFreq');
-            const resultBeatDisplay = document.getElementById('resultBeat');
-            const brainwaveTypeDisplay = document.getElementById('brainwaveType');
+            isochronicEnabled: false,
+            isochronicRate: 4,
+            isochronicWave: 'square',
             
-            // Audio context and nodes
-            let audioContext = null;
-            let leftOscillator = null;
-            let rightOscillator = null;
-            let noiseNode = null;
-            let noiseFilter = null;
-            let noiseGain = null;
-            let mainGain = null;
-            let isPlaying = false;
+            sweepEnabled: false,
+            sweepMin: 2,
+            sweepMax: 8,
             
-            // Current values
-            let baseFreq = 300;
-            let beatFreq = 4;
-            let noiseVol = 0.15;
-            let mainVol = 0.5;
-            let brainwaveType = 'theta';
+            dualEnabled: false,
+            secondaryBeatFreq: 8,
             
-            function showError(message) {
-                errorDisplay.textContent = message;
-                errorDisplay.style.display = 'block';
-                console.error(message);
+            monauralEnabled: false,
+            harmonicsEnabled: false,
+            
+            resonanceEnabled: false,
+            resonanceVolume: 0.3,
+            resonanceFreqs: {
+                '7.83': true,   // Schumann resonance
+                '432': true,    // A=432Hz
+                '528': false,   // DNA repair
+                '396': false,   // Root chakra
+                '639': false,   // Heart chakra
+                '111': false    // Beta focus
+            }
+        };
+        
+        // DOM Elements
+        const elements = {
+            // Main elements
+            playButton: document.getElementById('playButton'),
+            presetButtons: document.querySelectorAll('.preset-button'),
+            errorMessage: document.getElementById('errorMessage'),
+            advancedToggle: document.getElementById('advancedToggle'),
+            advancedOptions: document.getElementById('advancedOptions'),
+            
+            // Basic controls
+            baseFreq: document.getElementById('baseFreq'),
+            beatFreq: document.getElementById('beatFreq'),
+            mainVol: document.getElementById('mainVol'),
+            baseFreqValue: document.getElementById('baseFreqValue'),
+            beatFreqValue: document.getElementById('beatFreqValue'),
+            mainVolValue: document.getElementById('mainVolValue'),
+            
+            // Noise controls
+            noiseEnabled: document.getElementById('noiseEnabled'),
+            noiseVol: document.getElementById('noiseVol'),
+            noiseVolValue: document.getElementById('noiseVolValue'),
+            
+            // Isochronic controls
+            isochronicEnabled: document.getElementById('isochronicEnabled'),
+            isochronicControls: document.getElementById('isochronicControls'),
+            isoRate: document.getElementById('isoRate'),
+            isoRateValue: document.getElementById('isoRateValue'),
+            isoWaveRadios: document.querySelectorAll('input[name="isoWave"]'),
+            
+            // Sweep controls
+            sweepEnabled: document.getElementById('sweepEnabled'),
+            sweepControls: document.getElementById('sweepControls'),
+            sweepMin: document.getElementById('sweepMin'),
+            sweepMax: document.getElementById('sweepMax'),
+            sweepMinValue: document.getElementById('sweepMinValue'),
+            sweepMaxValue: document.getElementById('sweepMaxValue'),
+            
+            // Dual binaural controls
+            dualEnabled: document.getElementById('dualEnabled'),
+            dualControls: document.getElementById('dualControls'),
+            secondaryBeat: document.getElementById('secondaryBeat'),
+            secondaryBeatValue: document.getElementById('secondaryBeatValue'),
+            
+            // Other controls
+            monauralEnabled: document.getElementById('monauralEnabled'),
+            harmonicsEnabled: document.getElementById('harmonicsEnabled'),
+            
+            // Resonance controls
+            resonanceEnabled: document.getElementById('resonanceEnabled'),
+            resonanceControls: document.getElementById('resonanceControls'),
+            resonanceVol: document.getElementById('resonanceVol'),
+            resonanceVolValue: document.getElementById('resonanceVolValue'),
+            resonanceCheckboxes: document.querySelectorAll('.resonanceCheckbox'),
+            
+            // Status elements
+            statusLeftFreq: document.getElementById('statusLeftFreq'),
+            statusRightFreq: document.getElementById('statusRightFreq'),
+            statusBeatFreq: document.getElementById('statusBeatFreq'),
+            statusBrainwave: document.getElementById('statusBrainwave'),
+            statusIsochronic: document.getElementById('statusIsochronic'),
+            statusIsoRate: document.getElementById('statusIsoRate'),
+            statusIsoWave: document.getElementById('statusIsoWave'),
+            statusSweep: document.getElementById('statusSweep'),
+            statusSweepMin: document.getElementById('statusSweepMin'),
+            statusSweepMax: document.getElementById('statusSweepMax'),
+            statusDual: document.getElementById('statusDual'),
+            statusSecondaryBeat: document.getElementById('statusSecondaryBeat'),
+            statusMonaural: document.getElementById('statusMonaural'),
+            statusHarmonics: document.getElementById('statusHarmonics'),
+            statusNoise: document.getElementById('statusNoise'),
+            statusResonance: document.getElementById('statusResonance'),
+            statusResonanceList: document.getElementById('statusResonanceList')
+        };
+        
+        // Utility functions
+        
+        // Show error message
+        function showError(message) {
+            elements.errorMessage.textContent = message;
+            elements.errorMessage.style.display = 'block';
+            console.error(message);
+        }
+        
+        // Hide error message
+        function hideError() {
+            elements.errorMessage.style.display = 'none';
+        }
+        
+        // Set a brainwave preset
+        function setPreset(preset) {
+            // Update preset buttons
+            elements.presetButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.getAttribute('data-preset') === preset) {
+                    button.classList.add('active');
+                }
+            });
+            
+            // Update settings based on preset
+            settings.brainwaveType = preset;
+            
+            switch (preset) {
+                case 'delta':
+                    settings.baseFreq = 200;
+                    settings.beatFreq = 2;
+                    settings.isochronicRate = 2;
+                    settings.secondaryBeatFreq = 3;
+                    break;
+                case 'theta':
+                    settings.baseFreq = 300;
+                    settings.beatFreq = 4;
+                    settings.isochronicRate = 4;
+                    settings.secondaryBeatFreq = 7;
+                    break;
+                case 'alpha':
+                    settings.baseFreq = 400;
+                    settings.beatFreq = 10;
+                    settings.isochronicRate = 10;
+                    settings.secondaryBeatFreq = 12;
+                    break;
+                case 'beta':
+                    settings.baseFreq = 500;
+                    settings.beatFreq = 18;
+                    settings.isochronicRate = 18;
+                    settings.secondaryBeatFreq = 22;
+                    break;
+                case 'gamma':
+                    settings.baseFreq = 600;
+                    settings.beatFreq = 35;
+                    settings.isochronicRate = 35;
+                    settings.secondaryBeatFreq = 40;
+                    break;
             }
             
-            function hideError() {
-                errorDisplay.style.display = 'none';
+            // Update UI
+            updateUI();
+            
+            // Update audio if playing
+            if (isPlaying) {
+                updatePlayingAudio();
+            }
+        }
+        
+        // Update UI to match current settings
+        function updateUI() {
+            // Update basic controls
+            elements.baseFreq.value = settings.baseFreq;
+            elements.baseFreqValue.textContent = settings.baseFreq;
+            
+            elements.beatFreq.value = settings.beatFreq;
+            elements.beatFreqValue.textContent = settings.beatFreq;
+            
+            elements.mainVol.value = Math.round(settings.mainVolume * 100);
+            elements.mainVolValue.textContent = Math.round(settings.mainVolume * 100);
+            
+            // Update noise controls
+            elements.noiseEnabled.checked = settings.noiseEnabled;
+            elements.noiseVol.disabled = !settings.noiseEnabled;
+            
+            elements.noiseVol.value = Math.round(settings.noiseVolume * 100);
+            elements.noiseVolValue.textContent = Math.round(settings.noiseVolume * 100) + '%';
+            
+            // Update isochronic controls
+            elements.isochronicEnabled.checked = settings.isochronicEnabled;
+            elements.isochronicControls.style.display = settings.isochronicEnabled ? 'block' : 'none';
+            
+            elements.isoRate.value = settings.isochronicRate;
+            elements.isoRateValue.textContent = settings.isochronicRate;
+            
+            elements.isoWaveRadios.forEach(radio => {
+                radio.checked = radio.value === settings.isochronicWave;
+            });
+            
+            // Update sweep controls
+            elements.sweepEnabled.checked = settings.sweepEnabled;
+            elements.sweepControls.style.display = settings.sweepEnabled ? 'block' : 'none';
+            
+            elements.sweepMin.value = settings.sweepMin;
+            elements.sweepMinValue.textContent = settings.sweepMin;
+            
+            elements.sweepMax.value = settings.sweepMax;
+            elements.sweepMaxValue.textContent = settings.sweepMax;
+            
+            // Update dual binaural controls
+            elements.dualEnabled.checked = settings.dualEnabled;
+            elements.dualControls.style.display = settings.dualEnabled ? 'block' : 'none';
+            
+            elements.secondaryBeat.value = settings.secondaryBeatFreq;
+            elements.secondaryBeatValue.textContent = settings.secondaryBeatFreq;
+            
+            // Update other controls
+            elements.monauralEnabled.checked = settings.monauralEnabled;
+            elements.harmonicsEnabled.checked = settings.harmonicsEnabled;
+            
+            // Update resonance controls
+            elements.resonanceEnabled.checked = settings.resonanceEnabled;
+            elements.resonanceControls.style.display = settings.resonanceEnabled ? 'block' : 'none';
+            
+            elements.resonanceVol.value = Math.round(settings.resonanceVolume * 100);
+            elements.resonanceVolValue.textContent = Math.round(settings.resonanceVolume * 100);
+            
+            elements.resonanceCheckboxes.forEach(checkbox => {
+                const freq = checkbox.getAttribute('data-freq');
+                checkbox.checked = settings.resonanceFreqs[freq] || false;
+            });
+            
+            // Update status display
+            updateStatusDisplay();
+        }
+        
+        // Update status display
+        function updateStatusDisplay() {
+            elements.statusLeftFreq.textContent = settings.baseFreq;
+            elements.statusRightFreq.textContent = settings.baseFreq + settings.beatFreq;
+            elements.statusBeatFreq.textContent = settings.beatFreq;
+            elements.statusBrainwave.textContent = settings.brainwaveType;
+            
+            // Update feature-specific status items
+            elements.statusIsochronic.className = settings.isochronicEnabled ? '' : 'hidden';
+            elements.statusIsoRate.textContent = settings.isochronicRate;
+            elements.statusIsoWave.textContent = settings.isochronicWave;
+            
+            elements.statusSweep.className = settings.sweepEnabled ? '' : 'hidden';
+            elements.statusSweepMin.textContent = settings.sweepMin;
+            elements.statusSweepMax.textContent = settings.sweepMax;
+            
+            elements.statusDual.className = settings.dualEnabled ? '' : 'hidden';
+            elements.statusSecondaryBeat.textContent = settings.secondaryBeatFreq;
+            
+            elements.statusMonaural.className = settings.monauralEnabled ? '' : 'hidden';
+            elements.statusHarmonics.className = settings.harmonicsEnabled ? '' : 'hidden';
+            
+            elements.statusNoise.className = settings.noiseEnabled ? '' : 'hidden';
+            
+            elements.statusResonance.className = settings.resonanceEnabled ? '' : 'hidden';
+            
+            // Update resonance list
+            if (settings.resonanceEnabled) {
+                const activeFreqs = [];
+                for (const [freq, isActive] of Object.entries(settings.resonanceFreqs)) {
+                    if (isActive) {
+                        activeFreqs.push(`${freq}Hz`);
+                    }
+                }
+                elements.statusResonanceList.textContent = activeFreqs.join(', ');
+            }
+        }
+        
+        // Create white noise
+        function createNoise() {
+            try {
+                const bufferSize = 2 * audioContext.sampleRate;
+                const noiseBuffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
+                
+                for (let channel = 0; channel < 2; channel++) {
+                    const output = noiseBuffer.getChannelData(channel);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                }
+                
+                const noise = audioContext.createBufferSource();
+                noise.buffer = noiseBuffer;
+                noise.loop = true;
+                
+                return noise;
+            } catch (error) {
+                console.error("Error creating noise:", error);
+                return null;
+            }
+        }
+        
+        // Start isochronic pulses
+        function startIsochronicPulses() {
+            if (!isPlaying || !settings.isochronicEnabled) return;
+            
+            try {
+                // Create gain node for pulsing
+                if (!gainNodes.isochronic) {
+                    gainNodes.isochronic = audioContext.createGain();
+                    gainNodes.isochronic.gain.value = 1.0;
+                    gainNodes.isochronic.connect(audioContext.destination);
+                    
+                    // Reroute main gain to isochronic gain
+                    gainNodes.main.disconnect();
+                    gainNodes.main.connect(gainNodes.isochronic);
+                }
+                
+                // Clear any existing interval
+                if (intervals.isochronic) {
+                    clearInterval(intervals.isochronic);
+                }
+                
+                let isOn = true;
+                let phase = 0;
+                const pulseDuration = 1000 / settings.isochronicRate;
+                
+                intervals.isochronic = setInterval(() => {
+                    if (!isPlaying || !settings.isochronicEnabled) {
+                        clearInterval(intervals.isochronic);
+                        return;
+                    }
+                    
+                    try {
+                        const now = audioContext.currentTime;
+                        
+                        if (settings.isochronicWave === 'square') {
+                            // Classic on/off isochronic tones
+                            if (isOn) {
+                                gainNodes.isochronic.gain.linearRampToValueAtTime(0.001, now + 0.01);
+                            } else {
+                                gainNodes.isochronic.gain.linearRampToValueAtTime(1.0, now + 0.01);
+                            }
+                            isOn = !isOn;
+                        } 
+                        else if (settings.isochronicWave === 'sine') {
+                            // Smoother sine wave modulation
+                            phase += 0.1;
+                            if (phase > 1) phase -= 1;
+                            
+                            const value = 0.5 + 0.5 * Math.sin(phase * 2 * Math.PI);
+                            gainNodes.isochronic.gain.linearRampToValueAtTime(value, now + 0.01);
+                        }
+                        else if (settings.isochronicWave === 'triangle') {
+                            // Triangle wave modulation
+                            phase += 0.1;
+                            if (phase > 1) phase -= 1;
+                            
+                            let value;
+                            if (phase < 0.5) {
+                                value = phase * 2; // 0 to 1
+                            } else {
+                                value = 2 - phase * 2; // 1 to 0
+                            }
+                            
+                            gainNodes.isochronic.gain.linearRampToValueAtTime(value, now + 0.01);
+                        }
+                    } catch (error) {
+                        console.error("Error in isochronic pulse:", error);
+                    }
+                }, pulseDuration / 10);
+                
+            } catch (error) {
+                console.error("Failed to start isochronic pulses:", error);
+                showError("Failed to start isochronic pulses. Please try again.");
+            }
+        }
+        
+        // Stop isochronic pulses
+        function stopIsochronicPulses() {
+            if (intervals.isochronic) {
+                clearInterval(intervals.isochronic);
+                intervals.isochronic = null;
             }
             
-            // Helper to create white noise
-            function createNoiseNode() {
+            if (gainNodes.isochronic && gainNodes.main && audioContext) {
                 try {
-                    const bufferSize = 2 * audioContext.sampleRate;
-                    const noiseBuffer = audioContext.createBuffer(
-                        2, 
-                        bufferSize, 
-                        audioContext.sampleRate
+                    // Reset gain to normal
+                    gainNodes.isochronic.gain.value = 1.0;
+                    
+                    // Reroute main gain
+                    gainNodes.main.disconnect();
+                    gainNodes.main.connect(audioContext.destination);
+                    
+                    // Clean up
+                    gainNodes.isochronic.disconnect();
+                    gainNodes.isochronic = null;
+                } catch (error) {
+                    console.error("Error stopping isochronic pulses:", error);
+                }
+            }
+        }
+        
+        // Start frequency sweep
+        function startFrequencySweep() {
+            if (!isPlaying || !settings.sweepEnabled) return;
+            
+            try {
+                // Clear any existing interval
+                if (intervals.sweep) {
+                    clearInterval(intervals.sweep);
+                }
+                
+                let currentBeat = settings.sweepMin;
+                let direction = 1; // 1 = up, -1 = down
+                
+                intervals.sweep = setInterval(() => {
+                    if (!isPlaying || !settings.sweepEnabled) {
+                        clearInterval(intervals.sweep);
+                        return;
+                    }
+                    
+                    // Adjust the beat frequency
+                    currentBeat += 0.05 * direction;
+                    
+                    // Reverse direction at boundaries
+                    if (currentBeat >= settings.sweepMax) {
+                        direction = -1;
+                        currentBeat = settings.sweepMax;
+                    } else if (currentBeat <= settings.sweepMin) {
+                        direction = 1;
+                        currentBeat = settings.sweepMin;
+                    }
+                    
+                    // Apply new frequency to the oscillators
+                    if (oscillators.right) {
+                        oscillators.right.frequency.setValueAtTime(
+                            settings.baseFreq + currentBeat,
+                            audioContext.currentTime
+                        );
+                        
+                        // Update UI state
+                        settings.beatFreq = parseFloat(currentBeat.toFixed(2));
+                        elements.beatFreqValue.textContent = settings.beatFreq;
+                        elements.statusBeatFreq.textContent = settings.beatFreq;
+                        elements.statusRightFreq.textContent = settings.baseFreq + settings.beatFreq;
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error("Failed to start frequency sweep:", error);
+                showError("Failed to start frequency sweep. Please try again.");
+            }
+        }
+        
+        // Setup resonant frequencies
+        function setupResonances() {
+            // Clean up any existing resonance oscillators
+            for (const key in oscillators) {
+                if (key.startsWith('res_')) {
+                    try {
+                        oscillators[key].stop();
+                        oscillators[key].disconnect();
+                        delete oscillators[key];
+                        
+                        if (gainNodes[key]) {
+                            gainNodes[key].disconnect();
+                            delete gainNodes[key];
+                        }
+                    } catch (error) {
+                        console.error(`Error cleaning up resonance ${key}:`, error);
+                    }
+                }
+            }
+            
+            if (!settings.resonanceEnabled) return;
+            
+            // Create merger for stereo output
+            const merger = audioContext.createChannelMerger(2);
+            merger.connect(gainNodes.main);
+            
+            // Create new oscillators for each active resonance
+            for (const [freq, isActive] of Object.entries(settings.resonanceFreqs)) {
+                if (isActive) {
+                    try {
+                        const key = `res_${freq}`;
+                        
+                        // Create oscillator
+                        oscillators[key] = audioContext.createOscillator();
+                        oscillators[key].type = 'sine';
+                        oscillators[key].frequency.value = parseFloat(freq);
+                        
+                        // Create gain node
+                        gainNodes[key] = audioContext.createGain();
+                        gainNodes[key].gain.value = settings.resonanceVolume;
+                        
+                        // Connect to both channels
+                        oscillators[key].connect(gainNodes[key]);
+                        gainNodes[key].connect(merger, 0, 0);
+                        gainNodes[key].connect(merger, 0, 1);
+                        
+                        // Start oscillator
+                        oscillators[key].start();
+                    } catch (error) {
+                        console.error(`Error creating resonance ${freq}Hz:`, error);
+                    }
+                }
+            }
+        }
+        
+        // Update audio parameters while playing
+        function updatePlayingAudio() {
+            if (!isPlaying) return;
+            
+            try {
+                // Update oscillator frequencies
+                if (oscillators.left) {
+                    oscillators.left.frequency.setValueAtTime(
+                        settings.baseFreq, 
+                        audioContext.currentTime
+                    );
+                }
+                
+                if (oscillators.right && !settings.sweepEnabled) {
+                    oscillators.right.frequency.setValueAtTime(
+                        settings.baseFreq + settings.beatFreq, 
+                        audioContext.currentTime
+                    );
+                }
+                
+                // Update main volume
+                if (gainNodes.main) {
+                    gainNodes.main.gain.setValueAtTime(
+                        settings.mainVolume, 
+                        audioContext.currentTime
+                    );
+                }
+                
+                // Update noise volume
+                if (settings.noiseEnabled && gainNodes.noise) {
+                    gainNodes.noise.gain.setValueAtTime(
+                        settings.noiseVolume, 
+                        audioContext.currentTime
+                    );
+                }
+                
+                // Update dual binaural oscillators
+                if (settings.dualEnabled && oscillators.dualLeft && oscillators.dualRight) {
+                    oscillators.dualLeft.frequency.setValueAtTime(
+                        settings.baseFreq * 1.5, 
+                        audioContext.currentTime
                     );
                     
-                    // Fill buffer with white noise
-                    for (let channel = 0; channel < noiseBuffer.numberOfChannels; channel++) {
-                        const output = noiseBuffer.getChannelData(channel);
-                        for (let i = 0; i < bufferSize; i++) {
-                            output[i] = Math.random() * 2 - 1;
+                    oscillators.dualRight.frequency.setValueAtTime(
+                        settings.baseFreq * 1.5 + settings.secondaryBeatFreq, 
+                        audioContext.currentTime
+                    );
+                }
+                
+                // Update resonance volumes
+                if (settings.resonanceEnabled) {
+                    for (const key in gainNodes) {
+                        if (key.startsWith('res_')) {
+                            gainNodes[key].gain.setValueAtTime(
+                                settings.resonanceVolume, 
+                                audioContext.currentTime
+                            );
                         }
                     }
-                    
-                    // Create noise source from buffer
-                    const noise = audioContext.createBufferSource();
-                    noise.buffer = noiseBuffer;
-                    noise.loop = true;
-                    
-                    return noise;
-                } catch (error) {
-                    showError("Error creating noise: " + error.message);
-                    return null;
                 }
-            }
-            
-            // Set brainwave presets
-            function setBrainwavePreset(type) {
-                brainwaveType = type;
-                brainwaveTypeDisplay.textContent = type;
                 
-                // Clear active class from all buttons
-                presetButtons.forEach(btn => btn.classList.remove('active'));
+                // Manage feature enablement/disablement
                 
-                // Add active class to selected button
-                document.querySelector(`.preset-button[data-type="${type}"]`).classList.add('active');
-                
-                switch(type) {
-                    case 'delta':
-                        setBaseFreq(200);
-                        setBeatFreq(2);
-                        break;
-                    case 'theta':
-                        setBaseFreq(300);
-                        setBeatFreq(4);
-                        break;
-                    case 'alpha':
-                        setBaseFreq(400);
-                        setBeatFreq(8);
-                        break;
-                    case 'beta':
-                        setBaseFreq(500);
-                        setBeatFreq(16);
-                        break;
-                    case 'gamma':
-                        setBaseFreq(600);
-                        setBeatFreq(30);
-                        break;
+                // Isochronic pulses
+                if (settings.isochronicEnabled && !intervals.isochronic) {
+                    startIsochronicPulses();
+                } else if (!settings.isochronicEnabled && intervals.isochronic) {
+                    stopIsochronicPulses();
                 }
-            }
-            
-            // Update base frequency
-            function setBaseFreq(freq) {
-                baseFreq = freq;
-                baseFreqSlider.value = freq;
-                baseFreqValue.textContent = freq;
-                updateFrequencyDisplays();
                 
-                if (isPlaying && leftOscillator) {
-                    try {
-                        leftOscillator.frequency.value = baseFreq;
-                        rightOscillator.frequency.value = baseFreq + beatFreq;
-                    } catch (error) {
-                        showError("Error updating frequencies: " + error.message);
+                // Frequency sweep
+                if (settings.sweepEnabled && !intervals.sweep) {
+                    startFrequencySweep();
+                } else if (!settings.sweepEnabled && intervals.sweep) {
+                    clearInterval(intervals.sweep);
+                    intervals.sweep = null;
+                    
+                    // Reset right oscillator frequency
+                    if (oscillators.right) {
+                        oscillators.right.frequency.setValueAtTime(
+                            settings.baseFreq + settings.beatFreq, 
+                            audioContext.currentTime
+                        );
                     }
                 }
-            }
-            
-            // Update beat frequency
-            function setBeatFreq(freq) {
-                beatFreq = freq;
-                beatFreqSlider.value = freq;
-                beatFreqValue.textContent = freq;
-                updateFrequencyDisplays();
                 
-                if (isPlaying && rightOscillator) {
-                    try {
-                        rightOscillator.frequency.value = baseFreq + beatFreq;
-                    } catch (error) {
-                        showError("Error updating beat frequency: " + error.message);
+                // Dual binaural beats
+                if (settings.dualEnabled && !oscillators.dualLeft) {
+                    setupDualBinaural();
+                } else if (!settings.dualEnabled && oscillators.dualLeft) {
+                    oscillators.dualLeft.stop();
+                    oscillators.dualRight.stop();
+                    
+                    oscillators.dualLeft.disconnect();
+                    oscillators.dualRight.disconnect();
+                    
+                    gainNodes.dualLeft.disconnect();
+                    gainNodes.dualRight.disconnect();
+                    
+                    delete oscillators.dualLeft;
+                    delete oscillators.dualRight;
+                    delete gainNodes.dualLeft;
+                    delete gainNodes.dualRight;
+                }
+                
+                // Background noise
+                if (settings.noiseEnabled && !oscillators.noise) {
+                    setupNoise();
+                } else if (!settings.noiseEnabled && oscillators.noise) {
+                    oscillators.noise.stop();
+                    oscillators.noise.disconnect();
+                    
+                    if (filters.noise) filters.noise.disconnect();
+                    if (gainNodes.noise) gainNodes.noise.disconnect();
+                    
+                    delete oscillators.noise;
+                    delete filters.noise;
+                    delete gainNodes.noise;
+                }
+                
+                // Monaural beats
+                if (settings.monauralEnabled && !oscillators.mono1) {
+                    setupMonauralBeats();
+                } else if (!settings.monauralEnabled && oscillators.mono1) {
+                    oscillators.mono1.stop();
+                    oscillators.mono2.stop();
+                    
+                    oscillators.mono1.disconnect();
+                    oscillators.mono2.disconnect();
+                    
+                    if (gainNodes.mono) gainNodes.mono.disconnect();
+                    
+                    delete oscillators.mono1;
+                    delete oscillators.mono2;
+                    delete gainNodes.mono;
+                }
+                
+                // Harmonic layering
+                if (settings.harmonicsEnabled && !oscillators.harmonic1) {
+                    setupHarmonics();
+                } else if (!settings.harmonicsEnabled && oscillators.harmonic1) {
+                    for (let i = 1; i <= 3; i++) {
+                        oscillators[`harmonic${i}`].stop();
+                        oscillators[`harmonic${i}`].disconnect();
+                        delete oscillators[`harmonic${i}`];
+                        
+                        if (gainNodes[`harmonic${i}`]) {
+                            gainNodes[`harmonic${i}`].disconnect();
+                            delete gainNodes[`harmonic${i}`];
+                        }
                     }
                 }
+                
+                // Resonant frequencies
+                if (settings.resonanceEnabled) {
+                    setupResonances();
+                } else {
+                    // Clean up resonance oscillators
+                    for (const key in oscillators) {
+                        if (key.startsWith('res_')) {
+                            oscillators[key].stop();
+                            oscillators[key].disconnect();
+                            delete oscillators[key];
+                            
+                            if (gainNodes[key]) {
+                                gainNodes[key].disconnect();
+                                delete gainNodes[key];
+                            }
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error("Error updating audio parameters:", error);
+                showError("Error updating audio. You may need to stop and restart.");
             }
+        }
+        
+        // Setup dual binaural beats
+        function setupDualBinaural() {
+            if (!isPlaying || !settings.dualEnabled) return;
             
-            // Update frequency displays
-            function updateFrequencyDisplays() {
-                leftFreqDisplay.textContent = baseFreq;
-                rightFreqDisplay.textContent = baseFreq + beatFreq;
-                resultBeatDisplay.textContent = beatFreq;
+            try {
+                oscillators.dualLeft = audioContext.createOscillator();
+                oscillators.dualRight = audioContext.createOscillator();
+                
+                // Higher carrier frequency for second beat
+                oscillators.dualLeft.frequency.value = settings.baseFreq * 1.5;
+                oscillators.dualRight.frequency.value = settings.baseFreq * 1.5 + settings.secondaryBeatFreq;
+                
+                // Create gain nodes
+                gainNodes.dualLeft = audioContext.createGain();
+                gainNodes.dualRight = audioContext.createGain();
+                gainNodes.dualLeft.gain.value = 0.7;
+                gainNodes.dualRight.gain.value = 0.7;
+                
+                // Connect to merger
+                const merger = audioContext.createChannelMerger(2);
+                merger.connect(gainNodes.main);
+                
+                oscillators.dualLeft.connect(gainNodes.dualLeft);
+                gainNodes.dualLeft.connect(merger, 0, 0);
+                
+                oscillators.dualRight.connect(gainNodes.dualRight);
+                gainNodes.dualRight.connect(merger, 0, 1);
+                
+                // Start oscillators
+                oscillators.dualLeft.start();
+                oscillators.dualRight.start();
+            } catch (error) {
+                console.error("Error setting up dual binaural beats:", error);
+                showError("Failed to set up secondary binaural beat.");
             }
+        }
+        
+        // Setup monaural beats
+        function setupMonauralBeats() {
+            if (!isPlaying || !settings.monauralEnabled) return;
             
-            // Start sound
-            function startSound() {
+            try {
+                oscillators.mono1 = audioContext.createOscillator();
+                oscillators.mono2 = audioContext.createOscillator();
+                
+                // Frequencies for monaural beating
+                oscillators.mono1.frequency.value = settings.baseFreq - settings.beatFreq / 2;
+                oscillators.mono2.frequency.value = settings.baseFreq + settings.beatFreq / 2;
+                
+                // Create gain node
+                gainNodes.mono = audioContext.createGain();
+                gainNodes.mono.gain.value = 0.5;
+                
+                // Connect to both channels
+                oscillators.mono1.connect(gainNodes.mono);
+                oscillators.mono2.connect(gainNodes.mono);
+                
+                // Connect to main gain
+                gainNodes.mono.connect(gainNodes.main);
+                
+                // Start oscillators
+                oscillators.mono1.start();
+                oscillators.mono2.start();
+            } catch (error) {
+                console.error("Error setting up monaural beats:", error);
+                showError("Failed to set up monaural beats.");
+            }
+        }
+        
+        // Setup harmonic layering
+        function setupHarmonics() {
+            if (!isPlaying || !settings.harmonicsEnabled) return;
+            
+            try {
+                // Create harmonics
+                oscillators.harmonic1 = audioContext.createOscillator();
+                oscillators.harmonic2 = audioContext.createOscillator();
+                oscillators.harmonic3 = audioContext.createOscillator();
+                
+                // Set frequencies to harmonics
+                oscillators.harmonic1.frequency.value = settings.baseFreq * 2; // 1st harmonic
+                oscillators.harmonic2.frequency.value = settings.baseFreq * 3; // 2nd harmonic
+                oscillators.harmonic3.frequency.value = settings.baseFreq * 4; // 3rd harmonic
+                
+                // Create gain nodes with decreasing volumes
+                gainNodes.harmonic1 = audioContext.createGain();
+                gainNodes.harmonic2 = audioContext.createGain();
+                gainNodes.harmonic3 = audioContext.createGain();
+                
+                gainNodes.harmonic1.gain.value = 0.3;
+                gainNodes.harmonic2.gain.value = 0.15;
+                gainNodes.harmonic3.gain.value = 0.1;
+                
+                // Connect to main gain
+                oscillators.harmonic1.connect(gainNodes.harmonic1);
+                oscillators.harmonic2.connect(gainNodes.harmonic2);
+                oscillators.harmonic3.connect(gainNodes.harmonic3);
+                
+                gainNodes.harmonic1.connect(gainNodes.main);
+                gainNodes.harmonic2.connect(gainNodes.main);
+                gainNodes.harmonic3.connect(gainNodes.main);
+                
+                // Start oscillators
+                oscillators.harmonic1.start();
+                oscillators.harmonic2.start();
+                oscillators.harmonic3.start();
+            } catch (error) {
+                console.error("Error setting up harmonics:", error);
+                showError("Failed to set up harmonic layering.");
+            }
+        }
+        
+        // Setup noise
+        function setupNoise() {
+            if (!isPlaying || !settings.noiseEnabled) return;
+            
+            try {
+                oscillators.noise = createNoise();
+                
+                if (oscillators.noise) {
+                    // Create filter
+                    filters.noise = audioContext.createBiquadFilter();
+                    filters.noise.type = 'bandpass';
+                    filters.noise.frequency.value = 9500; // Center of 8000-11000 Hz
+                    filters.noise.Q.value = 1; // Width of the band
+                    
+                    // Create gain node
+                    gainNodes.noise = audioContext.createGain();
+                    gainNodes.noise.gain.value = settings.noiseVolume;
+                    
+                    // Connect nodes
+                    oscillators.noise.connect(filters.noise);
+                    filters.noise.connect(gainNodes.noise);
+                    gainNodes.noise.connect(gainNodes.main);
+                    
+                    // Start noise
+                    oscillators.noise.start();
+                }
+            } catch (error) {
+                console.error("Error setting up noise:", error);
+                showError("Failed to set up background noise.");
+            }
+        }
+        
+        // Start audio
+        function startAudio() {
+            try {
                 hideError();
                 
-                try {
-                    // Create new audio context if needed
-                    if (!audioContext) {
-                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        console.log("AudioContext created:", audioContext);
-                    }
-                    
-                    // Resume context if suspended
-                    if (audioContext.state === 'suspended') {
-                        audioContext.resume();
-                    }
-                    
-                    console.log("AudioContext state:", audioContext.state);
-                    
-                    // Main volume control
-                    mainGain = audioContext.createGain();
-                    mainGain.gain.value = mainVol;
-                    mainGain.connect(audioContext.destination);
-                    
-                    // Create oscillators for binaural beat
-                    leftOscillator = audioContext.createOscillator();
-                    rightOscillator = audioContext.createOscillator();
-                    
-                    // Set frequencies
-                    leftOscillator.frequency.value = baseFreq;
-                    rightOscillator.frequency.value = baseFreq + beatFreq;
-                    
-                    // Create stereo channel merger
-                    const merger = audioContext.createChannelMerger(2);
-                    
-                    // Create gains for each ear
-                    const leftGain = audioContext.createGain();
-                    const rightGain = audioContext.createGain();
-                    
-                    // Connect left oscillator
-                    leftOscillator.connect(leftGain);
-                    leftGain.connect(merger, 0, 0);
-                    
-                    // Connect right oscillator
-                    rightOscillator.connect(rightGain);
-                    rightGain.connect(merger, 0, 1);
-                    
-                    // Connect merger to main output
-                    merger.connect(mainGain);
-                    
-                    // Create and setup noise
-                    noiseNode = createNoiseNode();
-                    if (noiseNode) {
-                        noiseFilter = audioContext.createBiquadFilter();
-                        noiseGain = audioContext.createGain();
-                        
-                        // Configure bandpass filter for high-frequency noise
-                        noiseFilter.type = 'bandpass';
-                        noiseFilter.frequency.value = 9500; // Center of 8000-11000 Hz range
-                        noiseFilter.Q.value = 0.5; // Width of the band
-                        
-                        // Set noise volume
-                        noiseGain.gain.value = noiseVol;
-                        
-                        // Connect noise
-                        noiseNode.connect(noiseFilter);
-                        noiseFilter.connect(noiseGain);
-                        noiseGain.connect(mainGain);
-                    }
-                    
-                    // Start oscillators and noise
-                    leftOscillator.start();
-                    rightOscillator.start();
-                    if (noiseNode) noiseNode.start();
-                    
-                    isPlaying = true;
-                    playButton.textContent = 'Stop';
-                    playButton.classList.add('playing');
-                    
-                    console.log("Audio started successfully");
-                } catch (error) {
-                    showError("Failed to start audio: " + error.message);
-                    stopSound();
-                }
+                // Create/initialize audio context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Initialize containers
+                oscillators = {};
+                gainNodes = {};
+                filters = {};
+                intervals = {};
+                
+                // Create main gain node
+                gainNodes.main = audioContext.createGain();
+                gainNodes.main.gain.value = settings.mainVolume;
+                gainNodes.main.connect(audioContext.destination);
+                
+                // Create merger for stereo channel separation
+                const merger = audioContext.createChannelMerger(2);
+                merger.connect(gainNodes.main);
+                
+                // Create main binaural oscillators
+                oscillators.left = audioContext.createOscillator();
+                oscillators.right = audioContext.createOscillator();
+                
+                oscillators.left.frequency.value = settings.baseFreq;
+                oscillators.right.frequency.value = settings.baseFreq + settings.beatFreq;
+                
+                // Create gain nodes for each ear
+                gainNodes.left = audioContext.createGain();
+                gainNodes.right = audioContext.createGain();
+                
+                // Connect left channel
+                oscillators.left.connect(gainNodes.left);
+                gainNodes.left.connect(merger, 0, 0);
+                
+                // Connect right channel
+                oscillators.right.connect(gainNodes.right);
+                gainNodes.right.connect(merger, 0, 1);
+                
+                // Start the main oscillators
+                oscillators.left.start();
+                oscillators.right.start();
+                
+                // Set up optional features
+                if (settings.dualEnabled) setupDualBinaural();
+                if (settings.noiseEnabled) setupNoise();
+                if (settings.monauralEnabled) setupMonauralBeats();
+                if (settings.harmonicsEnabled) setupHarmonics();
+                if (settings.resonanceEnabled) setupResonances();
+                
+                // Set flag
+                isPlaying = true;
+                
+                // Update button
+                elements.playButton.textContent = 'Stop';
+                elements.playButton.classList.add('stop');
+                
+                // Start effects
+                if (settings.isochronicEnabled) startIsochronicPulses();
+                if (settings.sweepEnabled) startFrequencySweep();
+                
+                // Disable controls that can't be changed while playing
+                elements.baseFreq.disabled = true;
+                elements.beatFreq.disabled = settings.sweepEnabled;
+                
+            } catch (error) {
+                console.error("Failed to start audio:", error);
+                showError("Failed to start audio: " + error.message);
+                stopAudio();
             }
-            
-            // Stop sound
-            function stopSound() {
-                try {
-                    if (leftOscillator) {
-                        leftOscillator.stop();
-                        leftOscillator = null;
-                    }
-                    
-                    if (rightOscillator) {
-                        rightOscillator.stop();
-                        rightOscillator = null;
-                    }
-                    
-                    if (noiseNode) {
-                        noiseNode.stop();
-                        noiseNode = null;
-                    }
-                } catch (error) {
-                    console.error("Error stopping sound:", error);
-                } finally {
-                    isPlaying = false;
-                    playButton.textContent = 'Start';
-                    playButton.classList.remove('playing');
+        }
+        
+        // Stop audio
+        function stopAudio() {
+            try {
+                // Clear all intervals
+                for (const key in intervals) {
+                    clearInterval(intervals[key]);
                 }
+                intervals = {};
+                
+                // Stop all oscillators
+                for (const key in oscillators) {
+                    try {
+                        oscillators[key].stop();
+                        oscillators[key].disconnect();
+                    } catch (e) {
+                        console.error(`Error stopping oscillator ${key}:`, e);
+                    }
+                }
+                
+                // Disconnect all gains and filters
+                for (const key in gainNodes) {
+                    try {
+                        gainNodes[key].disconnect();
+                    } catch (e) {
+                        console.error(`Error disconnecting gain ${key}:`, e);
+                    }
+                }
+                
+                for (const key in filters) {
+                    try {
+                        filters[key].disconnect();
+                    } catch (e) {
+                        console.error(`Error disconnecting filter ${key}:`, e);
+                    }
+                }
+                
+                // Close audio context
+                if (audioContext) {
+                    audioContext.close().then(() => {
+                        console.log("Audio context closed");
+                    }).catch(e => {
+                        console.error("Error closing audio context:", e);
+                    });
+                }
+                
+                // Reset references
+                oscillators = {};
+                gainNodes = {};
+                filters = {};
+                audioContext = null;
+                
+            } catch (error) {
+                console.error("Error stopping audio:", error);
+            } finally {
+                // Update state and UI regardless of errors
+                isPlaying = false;
+                elements.playButton.textContent = 'Start';
+                elements.playButton.classList.remove('stop');
+                
+                // Re-enable controls
+                elements.baseFreq.disabled = false;
+                elements.beatFreq.disabled = false;
             }
-            
-            // Event listeners
-            playButton.addEventListener('click', function() {
-                console.log("Play button clicked");
-                
-                if (isPlaying) {
-                    stopSound();
-                } else {
-                    startSound();
-                }
-            });
-            
-            baseFreqSlider.addEventListener('input', function() {
-                setBaseFreq(parseInt(this.value));
-            });
-            
-            beatFreqSlider.addEventListener('input', function() {
-                setBeatFreq(parseFloat(this.value));
-            });
-            
-            noiseVolSlider.addEventListener('input', function() {
-                const value = parseInt(this.value) / 100;
-                noiseVol = value;
-                noiseVolValue.textContent = this.value;
-                
-                if (noiseGain) {
-                    try {
-                        noiseGain.gain.value = value;
-                    } catch (error) {
-                        console.error("Error updating noise volume:", error);
-                    }
-                }
-            });
-            
-            mainVolSlider.addEventListener('input', function() {
-                const value = parseInt(this.value) / 100;
-                mainVol = value;
-                mainVolValue.textContent = this.value;
-                
-                if (mainGain) {
-                    try {
-                        mainGain.gain.value = value;
-                    } catch (error) {
-                        console.error("Error updating main volume:", error);
-                    }
-                }
-            });
-            
-            presetButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    setBrainwavePreset(this.dataset.type);
-                });
-            });
-            
-            // Initialize displays
-            updateFrequencyDisplays();
-            
-            console.log("Setup complete - generator ready");
+        }
+        
+        // EVENT LISTENERS
+        
+        // Play/Stop button
+        elements.playButton.addEventListener('click', function() {
+            if (isPlaying) {
+                stopAudio();
+            } else {
+                startAudio();
+            }
         });
+        
+        // Preset buttons
+        elements.presetButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                setPreset(this.getAttribute('data-preset'));
+            });
+        });
+        
+        // Advanced toggle
+        elements.advancedToggle.addEventListener('click', function() {
+            const isHidden = elements.advancedOptions.classList.contains('hidden');
+            elements.advancedOptions.classList.toggle('hidden');
+            this.textContent = isHidden ? 'Hide Advanced Options' : 'Show Advanced Options';
+        });
+        
+        // Base frequency slider
+        elements.baseFreq.addEventListener('input', function() {
+            settings.baseFreq = parseInt(this.value);
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Beat frequency slider
+        elements.beatFreq.addEventListener('input', function() {
+            settings.beatFreq = parseFloat(this.value);
+            updateUI();
+            if (isPlaying && !settings.sweepEnabled) updatePlayingAudio();
+        });
+        
+        // Main volume slider
+        elements.mainVol.addEventListener('input', function() {
+            settings.mainVolume = parseInt(this.value) / 100;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Noise toggle
+        elements.noiseEnabled.addEventListener('change', function() {
+            settings.noiseEnabled = this.checked;
+            elements.noiseVol.disabled = !this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Noise volume slider
+        elements.noiseVol.addEventListener('input', function() {
+            settings.noiseVolume = parseInt(this.value) / 100;
+            updateUI();
+            if (isPlaying && settings.noiseEnabled && gainNodes.noise) {
+                gainNodes.noise.gain.value = settings.noiseVolume;
+            }
+        });
+        
+        // Isochronic toggle
+        elements.isochronicEnabled.addEventListener('change', function() {
+            settings.isochronicEnabled = this.checked;
+            updateUI();
+            if (isPlaying) {
+                if (settings.isochronicEnabled) {
+                    startIsochronicPulses();
+                } else {
+                    stopIsochronicPulses();
+                }
+            }
+        });
+        
+        // Isochronic rate slider
+        elements.isoRate.addEventListener('input', function() {
+            settings.isochronicRate = parseFloat(this.value);
+            updateUI();
+            if (isPlaying && settings.isochronicEnabled) {
+                // Restart isochronic pulses with new rate
+                stopIsochronicPulses();
+                startIsochronicPulses();
+            }
+        });
+        
+        // Isochronic wave type
+        elements.isoWaveRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    settings.isochronicWave = this.value;
+                    updateUI();
+                }
+            });
+        });
+        
+        // Sweep toggle
+        elements.sweepEnabled.addEventListener('change', function() {
+            settings.sweepEnabled = this.checked;
+            elements.beatFreq.disabled = isPlaying && this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Sweep min/max sliders
+        elements.sweepMin.addEventListener('input', function() {
+            settings.sweepMin = parseFloat(this.value);
+            
+            // Ensure min is always less than max
+            if (settings.sweepMin >= settings.sweepMax) {
+                settings.sweepMax = settings.sweepMin + 0.5;
+                elements.sweepMax.value = settings.sweepMax;
+            }
+            
+            updateUI();
+        });
+        
+        elements.sweepMax.addEventListener('input', function() {
+            settings.sweepMax = parseFloat(this.value);
+            
+            // Ensure max is always greater than min
+            if (settings.sweepMax <= settings.sweepMin) {
+                settings.sweepMin = settings.sweepMax - 0.5;
+                elements.sweepMin.value = settings.sweepMin;
+            }
+            
+            updateUI();
+        });
+        
+        // Dual binaural toggle
+        elements.dualEnabled.addEventListener('change', function() {
+            settings.dualEnabled = this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Secondary beat frequency
+        elements.secondaryBeat.addEventListener('input', function() {
+            settings.secondaryBeatFreq = parseFloat(this.value);
+            updateUI();
+            if (isPlaying && settings.dualEnabled && oscillators.dualRight) {
+                oscillators.dualRight.frequency.value = settings.baseFreq * 1.5 + settings.secondaryBeatFreq;
+            }
+        });
+        
+        // Monaural beats toggle
+        elements.monauralEnabled.addEventListener('change', function() {
+            settings.monauralEnabled = this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Harmonic layering toggle
+        elements.harmonicsEnabled.addEventListener('change', function() {
+            settings.harmonicsEnabled = this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Resonance toggle
+        elements.resonanceEnabled.addEventListener('change', function() {
+            settings.resonanceEnabled = this.checked;
+            updateUI();
+            if (isPlaying) updatePlayingAudio();
+        });
+        
+        // Resonance volume
+        elements.resonanceVol.addEventListener('input', function() {
+            settings.resonanceVolume = parseInt(this.value) / 100;
+            updateUI();
+            if (isPlaying && settings.resonanceEnabled) {
+                for (const key in gainNodes) {
+                    if (key.startsWith('res_')) {
+                        gainNodes[key].gain.value = settings.resonanceVolume;
+                    }
+                }
+            }
+        });
+        
+        // Resonance checkboxes
+        elements.resonanceCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const freq = this.getAttribute('data-freq');
+                settings.resonanceFreqs[freq] = this.checked;
+                updateUI();
+                if (isPlaying && settings.resonanceEnabled) {
+                    setupResonances();
+                }
+            });
+        });
+        
+        // Initialize feature control visibility
+        const featureControls = [
+            { toggle: elements.isochronicEnabled, controls: elements.isochronicControls },
+            { toggle: elements.sweepEnabled, controls: elements.sweepControls },
+            { toggle: elements.dualEnabled, controls: elements.dualControls },
+            { toggle: elements.resonanceEnabled, controls: elements.resonanceControls }
+        ];
+        
+        featureControls.forEach(item => {
+            item.toggle.addEventListener('change', function() {
+                item.controls.style.display = this.checked ? 'block' : 'none';
+            });
+        });
+        
+        // Initialize UI based on default settings
+        updateUI();
     </script>
 </body>
 </html>
